@@ -1,0 +1,201 @@
+#+title: shiftless Configuration
+
+* Syntax
+** Atom
+These are the smallest unit of data. An atom is a can be a string of characters, a number, or a symbol.
+*** Number
+regex: =-?[0-9]+=
+
+examples:
+- -1
+- 019823704
+- 67813645098123948
+  
+*** Floating Point Number
+regex: =-?[0-9]+[.][0-9]+=
+(must have a number in front of decimal).
+
+examples:
+- 0.0
+- 1.0
+- -0.1093847
+
+*** String
+regex: ='.*'=
+
+examples:
+- 'I am string.'
+- 'The cake is a lie.'
+- 'https://example.com'
+
+*** Symbol
+regex: =[^ \r\t\n]+= and must contain at least one non-number and should not contain ='=, =[=, or =]= either.
+It is suggested to use hyphens to separate multiple words.
+
+examples:
+- =io-mode=
+- =https://example.com=
+- =section-title=
+
+** S-expressions
+All atoms are also s-expressions. S-expressions can also be a sequence of s-expressions separated by white space and surrounded by square brackets.
+
+examples:
+#+BEGIN_SRC
+[1 2 3]
+[I 'am' [sexp 2] !]
+[]
+#+END_SRC
+
+As you can see, the s-expressions can be nested. 
+
+** Comments
+It can be useful to leave comments in configuration that are for only humans to read. This can be done with =;= which will start a comment and go to the end of the line.
+example:
+#+BEGIN_SRC
+These symbol are part of configuration.
+so are these ;; these ones are just comments and are not symbol at all
+#+END_SRC
+
+* Semantics
+
+** Sequence
+This is equivalent to a linked list or array in your programming language. Any s-expression list that is not an association is a sequence. Symbols inside a sequence should get converted to strings automatically.
+examples:
+#+BEGIN_SRC
+[/bin/bash my-script.sh https://example.com 54]
+['=' east west]
+#+END_SRC
+gets converted into Javascript like so:
+#+BEGIN_SRC javascript
+["/bin/bash", "my-script.sh", "https://example.com", 54]
+["=", "east", "west"]
+#+END_SRC
+
+** Association
+This is equivalent to an object, hash-table, or associative array or list. It is an s-expressions list of triplets: =key= ~=~ =value=. The ~=~ must be symbols. If your programming language is not fortunate enough to have symbols, you can create some intermediate type to differentiate between strings and symbols. If a sequence contains non-string ~=~ and is not a valid association, it is an error and is not valid shiftless. =key= can be either a symbol or a sequence of symbols representing nested singleton keys. =value= can be any s-expression except they symbol ~=~. If =value= is a symbol, it should be converted to a string. Duplicate keys are an error, unless the keys are referred to using the list notation, then only bottom level duplicates are error.
+
+examples:
+#+BEGIN_SRC
+[key = value
+ [key2 key] = [1 2 3]]
+#+END_SRC
+and in Javascript:
+#+BEGIN_SRC javascript
+  {
+    "key": "value",
+    "key2": {
+        "key": [1, 2, 3]
+    }
+  }
+#+END_SRC
+
+duplicate examples:
+#+BEGIN_SRC
+;; error
+[key = value
+ key = 1]
+;; no error
+[[key key1] = value1
+ [key key2] = value2]
+#+END_SRC
+Javascript:
+#+BEGIN_SRC javascript
+  {
+    "key": {
+      "key1": "value1",
+      "key2": "value2"
+    }
+  }
+#+END_SRC
+
+** Boolean
+The special symbol =t= should be interpreted as Boolean true. Any empty sequence, association, or absent property is Boolean false. Consequently, they are all printed the same way: =[]=.
+
+The caveat of the approach is that the shiftless library must provide some interface to retrieve non-existent configuration values to avoid null related errors.
+
+examples:
+#+BEGIN_SRC
+[key = t
+ [key2 key] = []]
+#+END_SRC
+
+#+BEGIN_SRC javascript
+  let config = {
+      "key": true,
+      "key2": {
+          "key": false
+      }
+  };
+  config["key2"]["key"] // false
+  config["key2"]["key2"] // undefined which is falsy
+  config["key2"]["key2"]["key"] // error. Don't let this happen! Define an interface instead.
+  // example interface
+  config("key2", "key2", "key") // false
+#+END_SRC
+
+** Top Level
+In shiftless the top level is always going to start with =[= and end with =]=, thus they are implied!
+
+example:
+#+BEGIN_SRC
+key = t
+[key2 key] = []
+#+END_SRC
+is exactly the same as the previous example. This indeed means that a totally empty configuration is just Boolean false.
+
+** Referring to Previously Defined Properties
+It is sometime useful to make one property depend on another. For this situation, there is a special kind of s-expression which starts with =.[= and ends with =]=; That is, it is a regular s-expression with a period directly in front of it. This s-expression must be a non-nested sequence of symbols. which refer to a previously defined property. This sequence must start at the top level. They can appear almost anywhere.
+
+example:
+#+BEGIN_SRC
+server = [
+  hostname = localhost
+  port = 8080]
+
+pages = [
+  home-page = http://.[server hostname]:.[server port] ; http://localhost:8080
+  login = '.[pages home-page]/login']                  ; http://localhost:8080/login
+
+strange-number = 192.[server port].182 ; 1928080.182
+#+END_SRC
+Of course by the time it gets to a usable state in your programming language (past the shiftless library), home-page and login will both be strings. strange-number will be a floating point number though.
+Be careful about referring to non-existent properties, because they will become =[]=.
+
+
+There is no way to include properties from another file; however, beyond the scope of a shiftless library, one could define meaning to arbitrary symbols such as include.
+
+example:
+#+BEGIN_SRC
+[include file1.shl file2.shl]
+#+END_SRC
+
+Because this happens beyond the shiftless library, one could define their own semantics for overwriting properties as well.
+
+* Indentation
+Indentation doesn't really matter, but it is nice to have some consistency.
+If there is a line break in an s-expression list the next element should line up with the start of the first element of the s-expression.
+
+example:
+#+BEGIN_SRC
+[1 3 4
+ 2 54
+ 2]
+#+END_SRC
+The exception is when the line break is right after the opening square bracket. Then the indentation should be ~<current-indentation> + <indentation (default 2)>~.
+
+examples:
+#+BEGIN_SRC 
+[
+  1 3 4
+  2 54
+  2]
+
+[key = [
+  key = value
+  key2 = [
+    2 3 4]]]
+ #+END_SRC
+
+* File extensions
+shiftless configuration file names should end in =.shl=.
