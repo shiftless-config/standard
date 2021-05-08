@@ -2,7 +2,7 @@
 
 * Syntax
 ** Atom
-These are the smallest unit of data. An atom can be a string of characters, a number, or a symbol.
+These are the smallest unit of data. An atom can be a string of characters, a number, or a symbol. Although there are different types of atoms. The shiftless library should provide a way for the user to get the original string that the user typed in for each one (excluding the single quotes for strings).
 *** Number
 regex: ~-?[0-9]+~
 
@@ -30,7 +30,7 @@ examples:
 
 *** Symbol
 regex: ~[^ \r\t\n]+~ and must contain at least one non-number and should not contain \', ~[~, or ~]~ either.
-It is suggested to use hyphens to separate multiple words.
+It is suggested to use hyphens to separate multiple words. Symbols are also case insensitive.
 
 examples:
 - ~io-mode~
@@ -51,6 +51,7 @@ As you can see, the s-expressions can be nested.
 
 ** Comments
 It can be useful to leave comments in configuration that are for only humans to read. This can be done with ~;~ which will start a comment and go to the end of the line.
+
 example:
 #+BEGIN_SRC
 These symbol are part of configuration.
@@ -61,6 +62,7 @@ so are these ;; these ones are just comments and are not symbol at all
 
 ** Sequence
 This is equivalent to a linked list or array in your programming language. Any s-expression list that is not an association is a sequence. Symbols inside a sequence should get converted to strings automatically.
+
 examples:
 #+BEGIN_SRC
 [/bin/bash my-script.sh https://example.com 54]
@@ -73,7 +75,7 @@ gets converted into Javascript like so:
 #+END_SRC
 
 ** Association
-This is equivalent to an object, hash-table, or associative array or list. It is an s-expressions list of triplets: ~key~ ~=~ ~value~. The ~=~ must be symbols. If your programming language is not fortunate enough to have symbols, you can create some intermediate type to differentiate between strings and symbols. If a sequence contains non-string ~=~ and is not a valid association, it is an error and is not valid shiftless. ~key~ can be either a symbol or a sequence of symbols representing nested singleton keys. ~value~ can be any s-expression except they symbol ~=~. If ~value~ is a symbol, it should be converted to a string. Duplicate keys are an error, unless the keys are referred to using the list notation, then only bottom level duplicates are error.
+This is equivalent to an object, hash-table, dictionary, associative array, or associative list. It is an s-expressions list of triplets: ~key~ ~=~ ~value~. The ~=~ must be symbols. If a sequence contains non-string ~=~ and is not a valid association, it is an error and is not valid shiftless. ~key~ can be either a symbol or a sequence of symbols representing nested singleton keys. ~value~ can be any s-expression except they symbol ~=~. If ~value~ is a symbol, it should be converted to a string. Duplicate keys are an error, unless the keys are referred to using the list notation, then only bottom level duplicates are error.
 
 examples:
 #+BEGIN_SRC
@@ -114,6 +116,8 @@ The special symbol ~t~ should be interpreted as Boolean true. Any empty sequence
 
 The caveat of the approach is that the shiftless library must provide some interface to retrieve non-existent configuration values to avoid null related errors.
 
+It is important to consider absent properties being false when creating a configuration schema: If you are creating a configuration for a robot, it is preferred to have a ~kill-humans~ option (that defaults to false), than a ~dont-kill-humans~ option. Along this same line, the shiftless library should provide a function to tell if a configuration property is present or not by using the string value: ~"[]"~ for explicitly false, and ~""~ for absent and implicitly false.
+
 examples:
 #+BEGIN_SRC
 [key = t
@@ -145,7 +149,7 @@ key = t
 is exactly the same as the previous example. This indeed means that a totally empty configuration is just Boolean false.
 
 ** Referring to Previously Defined Properties
-It is sometime useful to make one property depend on another. For this situation, there is a special kind of s-expression which starts with ~.[~ and ends with ~]~; That is, it is a regular s-expression with a period directly in front of it. This s-expression must be a non-nested sequence of symbols. which refer to a previously defined property. This sequence must start at the top level. They can appear almost anywhere.
+It is sometime useful to make one property depend on another. For this situation, there is a special kind of s-expression which starts with ~.[~ and ends with ~]~; That is, it is a regular s-expression with a period directly in front of it. This s-expression must be a non-nested sequence of symbols (or positive integers representing an index in a sequence starting at 0). which refer to a previously defined property. This sequence must start at the top level. They can appear almost anywhere.
 
 example:
 #+BEGIN_SRC
