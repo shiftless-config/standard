@@ -2,7 +2,7 @@
 
 * Syntax
 ** Atom
-These are the smallest unit of data. An atom is a can be a string of characters, a number, or a symbol.
+These are the smallest unit of data. An atom can be a string of characters, a number, or a symbol.
 *** Number
 regex: ~-?[0-9]+~
 
