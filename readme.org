@@ -21,11 +21,11 @@ examples:
 - -0.1093847
 
 *** String
-regex: ~'.*'~
+Strings are any sequence of characters surrounded in single quotes. Single quotes inside can be escaped with a single back slash and thus a backslash is a double back slash.
 
 examples:
-- 'I am string.'
 - 'The cake is a lie.'
+- 'That\'s a muffin.'
 - 'https://example.com'
 
 *** Symbol
