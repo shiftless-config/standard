@@ -24,12 +24,12 @@ examples:
 Strings are any sequence of characters surrounded in single quotes. Single quotes inside can be escaped with a single back slash and thus a backslash is a double back slash.
 
 examples:
-- 'The cake is a lie.'
-- 'That\'s a muffin.'
-- 'https://example.com'
+- \'The cake is a lie.\'
+- \'That\\\'s a muffin.\'
+- \'https://example.com\'
 
 *** Symbol
-regex: ~[^ \r\t\n]+~ and must contain at least one non-number and should not contain ', ~[~, or ~]~ either.
+regex: ~[^ \r\t\n]+~ and must contain at least one non-number and should not contain \', ~[~, or ~]~ either.
 It is suggested to use hyphens to separate multiple words.
 
 examples:
