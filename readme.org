@@ -21,7 +21,7 @@ examples:
 - -0.1093847
 
 *** String
-regex: ~'.*'~
+regex: '.*'
 
 examples:
 - 'I am string.'
@@ -29,7 +29,7 @@ examples:
 - 'https://example.com'
 
 *** Symbol
-regex: ~[^ \r\t\n]+~ and must contain at least one non-number and should not contain ~'~, ~[~, or ~]~ either.
+regex: ~[^ \r\t\n]+~ and must contain at least one non-number and should not contain ', ~[~, or ~]~ either.
 It is suggested to use hyphens to separate multiple words.
 
 examples:
