@@ -4,7 +4,7 @@
 ** Atom
 These are the smallest unit of data. An atom is a can be a string of characters, a number, or a symbol.
 *** Number
-regex: =-?[0-9]+=
+regex: ~-?[0-9]+~
 
 examples:
 - -1
@@ -12,7 +12,7 @@ examples:
 - 67813645098123948
   
 *** Floating Point Number
-regex: =-?[0-9]+[.][0-9]+=
+regex: ~-?[0-9]+[.][0-9]+~
 (must have a number in front of decimal).
 
 examples:
@@ -21,7 +21,7 @@ examples:
 - -0.1093847
 
 *** String
-regex: ='.*'=
+regex: ~'.*'~
 
 examples:
 - 'I am string.'
@@ -29,13 +29,13 @@ examples:
 - 'https://example.com'
 
 *** Symbol
-regex: =[^ \r\t\n]+= and must contain at least one non-number and should not contain ='=, =[=, or =]= either.
+regex: ~[^ \r\t\n]+~ and must contain at least one non-number and should not contain ~'~, ~[~, or ~]~ either.
 It is suggested to use hyphens to separate multiple words.
 
 examples:
-- =io-mode=
-- =https://example.com=
-- =section-title=
+- ~io-mode~
+- ~https://example.com~
+- ~section-title~
 
 ** S-expressions
 All atoms are also s-expressions. S-expressions can also be a sequence of s-expressions separated by white space and surrounded by square brackets.
@@ -50,7 +50,7 @@ examples:
 As you can see, the s-expressions can be nested. 
 
 ** Comments
-It can be useful to leave comments in configuration that are for only humans to read. This can be done with =;= which will start a comment and go to the end of the line.
+It can be useful to leave comments in configuration that are for only humans to read. This can be done with ~;~ which will start a comment and go to the end of the line.
 example:
 #+BEGIN_SRC
 These symbol are part of configuration.
@@ -73,7 +73,7 @@ gets converted into Javascript like so:
 #+END_SRC
 
 ** Association
-This is equivalent to an object, hash-table, or associative array or list. It is an s-expressions list of triplets: =key= ~=~ =value=. The ~=~ must be symbols. If your programming language is not fortunate enough to have symbols, you can create some intermediate type to differentiate between strings and symbols. If a sequence contains non-string ~=~ and is not a valid association, it is an error and is not valid shiftless. =key= can be either a symbol or a sequence of symbols representing nested singleton keys. =value= can be any s-expression except they symbol ~=~. If =value= is a symbol, it should be converted to a string. Duplicate keys are an error, unless the keys are referred to using the list notation, then only bottom level duplicates are error.
+This is equivalent to an object, hash-table, or associative array or list. It is an s-expressions list of triplets: ~key~ ~=~ ~value~. The ~=~ must be symbols. If your programming language is not fortunate enough to have symbols, you can create some intermediate type to differentiate between strings and symbols. If a sequence contains non-string ~=~ and is not a valid association, it is an error and is not valid shiftless. ~key~ can be either a symbol or a sequence of symbols representing nested singleton keys. ~value~ can be any s-expression except they symbol ~=~. If ~value~ is a symbol, it should be converted to a string. Duplicate keys are an error, unless the keys are referred to using the list notation, then only bottom level duplicates are error.
 
 examples:
 #+BEGIN_SRC
@@ -110,7 +110,7 @@ Javascript:
 #+END_SRC
 
 ** Boolean
-The special symbol =t= should be interpreted as Boolean true. Any empty sequence, association, or absent property is Boolean false. Consequently, they are all printed the same way: =[]=.
+The special symbol ~t~ should be interpreted as Boolean true. Any empty sequence, association, or absent property is Boolean false. Consequently, they are all printed the same way: ~[]~.
 
 The caveat of the approach is that the shiftless library must provide some interface to retrieve non-existent configuration values to avoid null related errors.
 
@@ -135,7 +135,7 @@ examples:
 #+END_SRC
 
 ** Top Level
-In shiftless the top level is always going to start with =[= and end with =]=, thus they are implied!
+In shiftless the top level is always going to start with ~[~ and end with ~]~, thus they are implied!
 
 example:
 #+BEGIN_SRC
@@ -145,7 +145,7 @@ key = t
 is exactly the same as the previous example. This indeed means that a totally empty configuration is just Boolean false.
 
 ** Referring to Previously Defined Properties
-It is sometime useful to make one property depend on another. For this situation, there is a special kind of s-expression which starts with =.[= and ends with =]=; That is, it is a regular s-expression with a period directly in front of it. This s-expression must be a non-nested sequence of symbols. which refer to a previously defined property. This sequence must start at the top level. They can appear almost anywhere.
+It is sometime useful to make one property depend on another. For this situation, there is a special kind of s-expression which starts with ~.[~ and ends with ~]~; That is, it is a regular s-expression with a period directly in front of it. This s-expression must be a non-nested sequence of symbols. which refer to a previously defined property. This sequence must start at the top level. They can appear almost anywhere.
 
 example:
 #+BEGIN_SRC
@@ -160,7 +160,7 @@ pages = [
 strange-number = 192.[server port].182 ; 1928080.182
 #+END_SRC
 Of course by the time it gets to a usable state in your programming language (past the shiftless library), home-page and login will both be strings. strange-number will be a floating point number though.
-Be careful about referring to non-existent properties, because they will become =[]=.
+Be careful about referring to non-existent properties, because they will become ~[]~.
 
 
 There is no way to include properties from another file; however, beyond the scope of a shiftless library, one could define meaning to arbitrary symbols such as include.
@@ -198,4 +198,4 @@ examples:
  #+END_SRC
 
 * File extensions
-shiftless configuration file names should end in =.shl=.
+shiftless configuration file names should end in ~.shl~.
