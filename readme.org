@@ -202,4 +202,4 @@ examples:
  #+END_SRC
 
 * File extensions
-shiftless configuration file names should end in ~.shl~.
+shiftless configuration file names should end in ~.slc~.
