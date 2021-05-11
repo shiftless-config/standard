@@ -1,4 +1,4 @@
-#+title: shiftless Configuration
+#+title: shiftless Configuration and Data Serialization Format
 
 * Syntax
 ** Atom
