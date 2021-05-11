@@ -62,7 +62,7 @@ so are these ;; these ones are just comments and are not symbol at all
 In this section, There are Javascript equivalents of each of the shiftless configuration data structures. This is just one possible way to convert them to help you understand the semantics. The shiftless library should actually have an interface that allows the programmer to get whatever type is needed for the program (example: the string \'5.30\' instead of the floating point number 5.3).
 
 ** Sequence
-This is equivalent to a linked list or array in your programming language. Any s-expression list that is not an association is a sequence. Symbols inside a sequence should get converted to strings automatically. Empty sequences can be written as ~[]~ or the special symbol ~nil~.
+This is equivalent to a linked list or array in your programming language. Any s-expression list that is not an association is a sequence. Empty sequences can be written as ~[]~ or the special symbol ~nil~.
 
 examples:
 #+BEGIN_SRC
@@ -76,7 +76,7 @@ gets converted into Javascript like so:
 #+END_SRC
 
 ** Association
-This is equivalent to an object, hash-table, dictionary, associative array, or associative list. It is an s-expressions list of triplets: ~key~ ~=~ ~value~. The ~=~ must be symbols. If a sequence contains non-string ~=~ and is not a valid association, it is an error and is not valid shiftless. ~key~ can be either a symbol or a sequence of symbols representing nested singleton keys. ~value~ can be any s-expression except they symbol ~=~. If ~value~ is a symbol, it should be converted to a string. Duplicate keys are an error, unless the keys are referred to using the list notation, then only bottom level duplicates are error. The empty association can be written as ~[]~ or the special symbol ~nil~.
+This is equivalent to an object, hash-table, dictionary, associative array, or associative list. It is an s-expressions list of triplets: ~key~ ~=~ ~value~. The ~=~ must be symbols. If a sequence contains non-string ~=~ and is not a valid association, it is an error and is not valid shiftless. ~key~ can be either a symbol or a sequence of symbols representing nested singleton keys. ~value~ can be any s-expression except they symbol ~=~. Duplicate keys are an error, unless the keys are referred to using the list notation, then only bottom level duplicates are error. The empty association can be written as ~[]~ or the special symbol ~nil~.
 
 examples:
 #+BEGIN_SRC
