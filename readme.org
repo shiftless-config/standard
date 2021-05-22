@@ -136,7 +136,7 @@ examples:
   config["key2"]["key2"] // undefined which is falsy
   config["key2"]["key2"]["key"] // error. Don't let this happen! Define an interface instead.
   // example interface
-  config("key2", "key2", "key") // false
+  access(config, "key2", "key2", "key") // false
 #+END_SRC
 
 ** Top Level
